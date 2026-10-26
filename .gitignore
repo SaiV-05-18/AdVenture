@@ -1,0 +1,17 @@
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Environment and secrets
+.env
+.env.*
+*.local
+
+# Node / Dependencies (if any added later)
+node_modules/
+npm-debug.log*
+
+# Editor directories
+.vscode/
+.idea/
+*.swp

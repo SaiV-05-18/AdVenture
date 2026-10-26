@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdVenture - Ad Pop-Up Manager</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-group">
+        <span class="logo-icon">📢</span>
+        <div>
+          <h1 class="title">AdVenture</h1>
+          <p class="subtitle">Personalized Ad Pop-Up Manager</p>
+        </div>
+      </div>
+      <div id="status-pill" class="status-pill stopped">
+        <span class="status-dot"></span>
+        <span id="status-text">STOPPED</span>
+      </div>
+    </header>
+
+    <!-- Master Action Section: Start / Stop Button & Quick Test -->
+    <div class="control-banner">
+      <button id="toggle-power-btn" class="power-btn btn-start">
+        <span class="power-icon">▶</span>
+        <span id="power-btn-label">START GENERATOR</span>
+      </button>
+
+      <div class="quick-config-grid">
+        <div class="quick-config-box">
+          <label for="setting-batch-count" class="quick-label">⚡ Ads at once:</label>
+          <select id="setting-batch-count" class="input-select quick-select">
+            <option value="1">1 Ad</option>
+            <option value="2">2 Ads</option>
+            <option value="3" selected>3 Ads</option>
+            <option value="4">4 Ads</option>
+            <option value="5">5 Ads</option>
+            <option value="7">7 Ads</option>
+          </select>
+        </div>
+        <div class="quick-config-box">
+          <label for="setting-frequency-quick" class="quick-label">⏱️ Interval:</label>
+          <select id="setting-frequency-quick" class="input-select quick-select">
+            <option value="10">Every 10s</option>
+            <option value="15">Every 15s</option>
+            <option value="30" selected>Every 30s</option>
+            <option value="60">Every 1m</option>
+            <option value="120">Every 2m</option>
+            <option value="300">Every 5m</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="test-ad-btn" class="test-btn" title="Instantly trigger ads on random sides of your current tab">
+        <span>⚡ Test Burst Now</span>
+      </button>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="categories-tab">Categories</button>
+      <button class="tab-btn" data-tab="custom-tab">Custom Ads (<span id="custom-count">0</span>)</button>
+      <button class="tab-btn" data-tab="settings-tab">Settings & AI</button>
+    </nav>
+
+    <!-- TAB 1: Categories -->
+    <section id="categories-tab" class="tab-content active">
+      <div class="section-intro">
+        Choose which types of personalized ads are allowed to appear:
+      </div>
+      <div id="categories-list" class="categories-list">
+        <!-- Injected dynamically by popup.js -->
+      </div>
+    </section>
+
+    <!-- TAB 2: Custom Ads -->
+    <section id="custom-tab" class="tab-content">
+      <div class="section-intro-row">
+        <span>Add your own personalized jokes, reminders, or goals:</span>
+        <button id="open-new-ad-modal-btn" class="btn-sm btn-primary">+ New Ad</button>
+      </div>
+
+      <!-- Add Ad Form (Collapsible) -->
+      <div id="new-ad-form" class="card form-card" style="display: none;">
+        <h3 class="form-title">Create Custom Ad</h3>
+        <div class="form-group">
+          <label>Headline *</label>
+          <input type="text" id="custom-headline" placeholder="e.g., Don't forget to drink water!" maxlength="60">
+        </div>
+        <div class="form-group">
+          <label>Pitch / Body *</label>
+          <textarea id="custom-body" placeholder="e.g., 2 liters today or else your plants will look at you with disappointment." rows="2" maxlength="150"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Button Text</label>
+            <input type="text" id="custom-cta" placeholder="e.g., Grab Water" maxlength="25">
+          </div>
+          <div class="form-group" style="width: 70px;">
+            <label>Emoji</label>
+            <input type="text" id="custom-emoji" value="📢" maxlength="4">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button id="cancel-ad-btn" class="btn-sm btn-ghost">Cancel</button>
+          <button id="save-custom-ad-btn" class="btn-sm btn-primary">Save Ad</button>
+        </div>
+      </div>
+
+      <!-- Custom Ads List -->
+      <div id="custom-ads-list" class="custom-ads-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB 3: Settings & AI -->
+    <section id="settings-tab" class="tab-content">
+      <div class="settings-group">
+        <label class="setting-label">Pop-Up Interval Frequency</label>
+        <p class="setting-desc">How often should a burst of ads pop up on the active tab?</p>
+        <select id="setting-frequency" class="input-select">
+          <option value="10">Every 10 seconds (Hyper Turbo)</option>
+          <option value="15">Every 15 seconds</option>
+          <option value="30" selected>Every 30 seconds (Default)</option>
+          <option value="60">Every 1 minute</option>
+          <option value="120">Every 2 minutes</option>
+          <option value="300">Every 5 minutes</option>
+        </select>
+      </div>
+
+      <div class="settings-group">
+        <label class="setting-label">Simultaneous Ads Count (Batch Size)</label>
+        <p class="setting-desc">How many ads should pop up at once on random sides of the screen?</p>
+        <select id="setting-batch-count-detail" class="input-select">
+          <option value="1">1 Ad (Single pop-up)</option>
+          <option value="2">2 Ads (Opposite corners)</option>
+          <option value="3">3 Ads (Classic pop-up cascade)</option>
+          <option value="4">4 Ads (Quad corners)</option>
+          <option value="5">5 Ads (Chaotic swarm)</option>
+          <option value="7">7 Ads (Pure 90s Adware Hell)</option>
+        </select>
+      </div>
+
+      <div class="settings-group">
+        <label class="setting-label">Pop-up Aesthetic Theme</label>
+        <p class="setting-desc">Select the visual appearance of the injected ad modal.</p>
+        <div class="theme-picker">
+          <label class="theme-option">
+            <input type="radio" name="theme" value="retro90s">
+            <div class="theme-preview theme-p-retro">
+              <span>💾 Retro 90s</span>
+            </div>
+          </label>
+          <label class="theme-option">
+            <input type="radio" name="theme" value="modern">
+            <div class="theme-preview theme-p-modern">
+              <span>✨ Modern Dark</span>
+            </div>
+          </label>
+          <label class="theme-option">
+            <input type="radio" name="theme" value="cyberpunk">
+            <div class="theme-preview theme-p-cyber">
+              <span>⚡ Cyberpunk</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-group toggle-row">
+        <div>
+          <label class="setting-label">Sound Effects</label>
+          <p class="setting-desc">Play retro chime audio when an ad appears.</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="setting-sound">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="card ai-card">
+        <div class="toggle-row">
+          <div>
+            <label class="setting-label">✨ Gemini AI Hyper-Personalization</label>
+            <p class="setting-desc">Uses Gemini to generate custom ads reading the active page's context in real time.</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="setting-use-ai">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div id="ai-config-panel" style="display: none; margin-top: 12px;">
+          <div class="form-group">
+            <label>Gemini API Key</label>
+            <input type="password" id="setting-api-key" placeholder="AIzaSy..." class="input-text">
+            <span class="help-text">Free API keys available at Google AI Studio.</span>
+          </div>
+          <div class="form-group">
+            <label>Your Personal Persona / Interests</label>
+            <input type="text" id="setting-user-persona" placeholder="e.g. Linux developer, coffee addict, hates CSS" class="input-text">
+            <span class="help-text">The AI references this to tailor ads to your habits.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>AdVenture Simulator v1.0</span>
+      <span class="pill-info">Drag popups to move them</span>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
