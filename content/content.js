@@ -687,6 +687,30 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const zone = SCREEN_ZONES[Math.floor(Math.random() * SCREEN_ZONES.length)];
     new AdVenturePopup(message.ad, message.settings, zone);
     sendResponse({ success: true });
+  } else if (message.action === "CLEAR_ALL_ADS") {
+    let clearedCount = activePopups.size;
+    const lingering = document.querySelectorAll('[id^="adventure-ad-host-"]');
+    clearedCount = Math.max(clearedCount, lingering.length);
+
+    // Dismiss and remove active popups
+    for (const popup of Array.from(activePopups)) {
+      try {
+        if (popup.host) {
+          popup.host.remove();
+          popup.host = null;
+        }
+      } catch (e) {}
+    }
+    activePopups.clear();
+
+    // Remove any lingering host DOM elements
+    lingering.forEach((node) => {
+      try {
+        node.remove();
+      } catch (e) {}
+    });
+
+    sendResponse({ success: true, count: clearedCount });
   } else if (message.action === "GET_PAGE_CONTEXT") {
     sendResponse({ context: getPageContext() });
   }

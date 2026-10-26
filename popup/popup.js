@@ -38,6 +38,8 @@ const settingUseAi = document.getElementById("setting-use-ai");
 const aiConfigPanel = document.getElementById("ai-config-panel");
 const settingApiKey = document.getElementById("setting-api-key");
 const settingUserPersona = document.getElementById("setting-user-persona");
+const clearScreenAdsBtn = document.getElementById("clear-screen-ads-btn");
+const clearAdsBtnLabel = document.getElementById("clear-ads-btn-label");
 
 let currentSettings = {};
 
@@ -321,6 +323,60 @@ function setupEventListeners() {
     currentSettings.userPersona = e.target.value.trim();
     await chrome.storage.local.set({ userPersona: currentSettings.userPersona });
   });
+
+  // Clear All Ads on Screen Button (One-click screen cleanup)
+  if (clearScreenAdsBtn) {
+    clearScreenAdsBtn.addEventListener("click", async () => {
+      clearScreenAdsBtn.disabled = true;
+      const originalLabel = clearAdsBtnLabel ? clearAdsBtnLabel.textContent : "Clear All Ads on Screen";
+      if (clearAdsBtnLabel) clearAdsBtnLabel.textContent = "Clearing Screen...";
+      clearScreenAdsBtn.classList.add("clearing");
+
+      let clearedCount = 0;
+
+      // 1. Send directly to active tab if available
+      try {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tabs && tabs[0] && tabs[0].id) {
+          try {
+            const res = await chrome.tabs.sendMessage(tabs[0].id, { action: "CLEAR_ALL_ADS" });
+            if (res && typeof res.count === "number") {
+              clearedCount = Math.max(clearedCount, res.count);
+            }
+          } catch (e) {
+            // Tab might be restricted or content script idle
+          }
+        }
+      } catch (err) {
+        console.warn("Could not query active tab:", err);
+      }
+
+      // 2. Broadcast via background service worker to all tabs
+      chrome.runtime.sendMessage({ action: "CLEAR_ALL_ADS" }, (res) => {
+        if (chrome.runtime.lastError) {
+          // Handled safely
+        }
+        if (res && typeof res.count === "number") {
+          clearedCount = Math.max(clearedCount, res.count);
+        }
+
+        clearScreenAdsBtn.classList.remove("clearing");
+        clearScreenAdsBtn.classList.add("cleared");
+
+        if (clearAdsBtnLabel) {
+          clearAdsBtnLabel.textContent = clearedCount > 0
+            ? `✨ Cleared ${clearedCount} Ad${clearedCount === 1 ? "" : "s"}!`
+            : "✨ All Ads Cleared!";
+        }
+
+        setTimeout(() => {
+          clearScreenAdsBtn.disabled = false;
+          clearScreenAdsBtn.classList.remove("cleared");
+          if (clearAdsBtnLabel) clearAdsBtnLabel.textContent = originalLabel;
+        }, 1600);
+      });
+    });
+  }
 }
 
 function clearNewAdForm() {

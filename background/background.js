@@ -191,6 +191,40 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message.action === "CLEAR_ALL_ADS") {
+    (async () => {
+      let totalCleared = 0;
+      try {
+        const tabs = await chrome.tabs.query({});
+        for (const tab of tabs) {
+          if (!tab.id) continue;
+          if (
+            tab.url?.startsWith("chrome://") ||
+            tab.url?.startsWith("chrome-extension://") ||
+            tab.url?.startsWith("edge://") ||
+            tab.url?.startsWith("about:") ||
+            tab.url?.startsWith("view-source:")
+          ) {
+            continue;
+          }
+
+          try {
+            const res = await chrome.tabs.sendMessage(tab.id, { action: "CLEAR_ALL_ADS" });
+            if (res && typeof res.count === "number") {
+              totalCleared += res.count;
+            }
+          } catch (e) {
+            // Tab might not have content script running
+          }
+        }
+      } catch (err) {
+        console.warn("Error broadcasting CLEAR_ALL_ADS:", err);
+      }
+      sendResponse({ success: true, count: totalCleared });
+    })();
+    return true;
+  }
+
   if (message.action === "SETTINGS_UPDATED") {
     (async () => {
       const data = await chrome.storage.local.get(["isRunning", "frequencySeconds", "frequencyMinutes"]);

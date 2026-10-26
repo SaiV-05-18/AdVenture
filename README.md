@@ -11,6 +11,8 @@ An interactive, customizable browser extension (Manifest V3) that generates pers
 - **Multiple Ads Simultaneously & Random Screen Positions**: Ads pop up across different random quadrants and edges of your screen (Top-Left, Top-Right, Bottom-Left, Bottom-Right, Mid-Left, Mid-Right, etc.) with an authentic cascading burst.
 - **Batch Count Controller**: Choose how many ads pop up per burst (1, 2, 3, 4, 5, or 7 ads).
 - **Master Start / Stop Controller**: Turn the pop-up generator on or off with a single click from the toolbar popup.
+- **🧹 One-Click "Clear All Ads on Screen"**: Overwhelmed by a swarm of pop-ups? Head to the **Settings & AI** tab and click **"Clear All Ads on Screen"** to immediately dismiss and wipe every active pop-up from your view in a single click!
+- **🎨 Beautified Simple Dark Theme Manager**: A sleek, modern dashboard styled in rich obsidian/slate tones with glowing status badges, custom dark scrollbars, smooth segmented navigation tabs, and tactile controls.
 - **Instant Test Trigger (`⚡ Test Burst Now`)**: Fire a batch of ads right away onto random sides of your current tab to preview ads without waiting.
 - **Granular Category Manager**: Toggle specific ad topics on or off:
   - 💻 **Developer & Tech Roasts** *(Git force-pushes, CSS despair, 99 open tabs, Rust rewrites)*
@@ -52,9 +54,12 @@ We've included a test article page in `test/demo-page.html`.
 
 1. In your browser, open `file:///home/SaiV-05-18/Projects/useless1/test/demo-page.html` (or any public site like Wikipedia, GitHub, or news sites).
 2. Click the **AdVenture icon (📢)** in your browser toolbar.
-3. Click **"⚡ Test Ad Now"** to instantly inject a pop-up onto the active tab.
+3. Click **"⚡ Test Burst Now"** to instantly inject a batch of pop-ups across random sides of the active tab.
 4. Click **"START GENERATOR"** to begin automatic pop-ups at your chosen frequency (e.g., every 30 seconds or every 1–5 minutes).
-5. Open the **"Settings & AI"** tab to switch themes (Retro 90s, Modern, Cyberpunk) or configure sound effects.
+5. Open the **"Settings & AI"** tab to:
+   - Click **"🧹 Clear All Ads on Screen"** to wipe away all active pop-ups with a single click.
+   - Switch pop-up themes (Retro 90s, Modern Dark Glass, Cyberpunk Neon).
+   - Configure sound effects and batch size.
 
 ---
 
